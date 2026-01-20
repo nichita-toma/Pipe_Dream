@@ -1,0 +1,78 @@
+import json
+import string
+
+counts = {}
+
+for letter in string.ascii_uppercase:
+    print("Loading", letter)   # 👈 ADD THIS
+    path = f"data/{letter}_people.json"
+
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            people = json.load(file)
+    except FileNotFoundError:
+        continue
+
+    for person in people:
+
+        # -------- activist check --------
+        is_activist = False
+
+        if "http://purl.org/dc/elements/1.1/description" in person:
+            desc = person["http://purl.org/dc/elements/1.1/description"]
+            if isinstance(desc, str) and "activist" in desc.lower():
+                is_activist = True
+
+        if "ontology/occupation_label" in person and not is_activist:
+            occ = person["ontology/occupation_label"]
+            if isinstance(occ, str) and "activist" in occ.lower():
+                is_activist = True
+            elif isinstance(occ, list):
+                for o in occ:
+                    if isinstance(o, str) and "activist" in o.lower():
+                        is_activist = True
+
+        if not is_activist:
+            continue
+
+        # -------- time filter (after 1800) --------
+        if "ontology/birthYear" not in person:
+            continue
+
+        try:
+            if int(person["ontology/birthYear"]) < 1800:
+                continue
+        except:
+            continue
+
+        # -------- gender --------
+        if "ontology/gender_label" not in person:
+            continue
+
+        gender = person["ontology/gender_label"]
+
+        # -------- nationality --------
+        if "ontology/nationality" not in person:
+            continue
+
+        nat = person["ontology/nationality"]
+
+        # -------- count --------
+        if isinstance(nat, list):
+            for n in nat:
+                key = (n, gender)
+                counts[key] = counts.get(key, 0) + 1
+        else:
+            key = (nat, gender)
+            counts[key] = counts.get(key, 0) + 1
+
+# -------- print results --------
+for (country, gender), number in sorted(counts.items(), key=lambda x: x[1], reverse=True):
+    print(country, "|", gender, ":", number)
+
+
+print("Processing", letter)
+
+for i, person in enumerate(people):
+    if i % 1000 == 0:
+        print(letter, ":", i)
