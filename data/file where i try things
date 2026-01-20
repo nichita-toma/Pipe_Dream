@@ -4,15 +4,24 @@ all_countries = {"Afghan", "Albanian", "Algerian", "American", "Andorran","Angol
 
 
 
-all_letters = {"People/A_people.json", "People/B_people.json", "People/C_people.json", "People/D_people.json", "People/E_people.json", "People/F_people.json", "People/G_people.json", "People/H_people.json", "People/I_people.json", "People/J_people.json", "People/K_people.json", "People/L_people.json", "People/M_people.json", "People/N_people.json", "People/O_people.json", "People/P_people.json", "People/Q_people.json", "People/R_people.json", "People/S_people.json", "People/T_people.json", "People/U_people.json", "People/V_people.json", "People/W_people.json", "People/X_people.json", "People/Y_people.json", "People/Z_people.json"}
-for each_letter in all_letters:
+all_letters = {
+    "data/A_people.json", "data/B_people.json", "data/C_people.json",
+    "data/D_people.json", "data/E_people.json", "data/F_people.json",
+    "data/G_people.json", "data/H_people.json", "data/I_people.json",
+    "data/J_people.json", "data/K_people.json", "data/L_people.json",
+    "data/M_people.json", "data/N_people.json", "data/O_people.json",
+    "data/P_people.json", "data/Q_people.json", "data/R_people.json",
+    "data/S_people.json", "data/T_people.json", "data/U_people.json",
+    "data/V_people.json", "data/W_people.json", "data/X_people.json",
+    "data/Y_people.json", "data/Z_people.json"
+}
       
-    with open(each_letter) as file:
+with open(each_letter) as file:
         data = json.load(file)
 
 
     
-    for item in data: 
+for item in data: 
         if "http://purl.org/dc/elements/1.1/description" in item:
             if "activist " in item["http://purl.org/dc/elements/1.1/description"]:
                     if "ontology/birthYear" in item:
