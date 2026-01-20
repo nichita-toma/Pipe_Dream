@@ -13,8 +13,7 @@ for letter in all_letters:
     for item in data: 
         if "http://purl.org/dc/elements/1.1/description" in item:
             if "activist " in item["http://purl.org/dc/elements/1.1/description"]:
-                    if "ontology/birthYear" in item:
-                        if   "ontology/deathYear" in item: 
+                    if "ontology/birthYear" in item and "ontology/deathYear" in item: 
                             if type(item["ontology/deathYear"]) is str and type(item["ontology/birthYear"]) is str:
                         
                                 if int(item["ontology/birthYear"])> 1800:
@@ -22,21 +21,22 @@ for letter in all_letters:
                                     print(age)
                                     print(item["title"], item["http://purl.org/dc/elements/1.1/description"])
                                     if any(char.isupper()for char in item["http://purl.org/dc/elements/1.1/description"]):
-                                        description = item["http://purl.org/dc/elements/1.1/description"].split(" ")
-                                        nationality = description[0]
-                                        if  nationality in all_nationalities:
-                                                print(nationality)        
-                                        elif "ontology/deathPlace_label" in item:
-                                            if type(item["ontology/deathPlace_label"]) is list:
-                                                for tara in item["ontology/deathPlace_label"]:
-                                                    if tara in all_countries:
-                                                      print(tara)
-                                         
-                                        elif "ontology/birthPlace_label" in item:
-                                            if type(item["ontology/birthPlace_label"]) is list:
-                                                for teritoriu in item["ontology/birthPlace_label"]:
-                                                    if teritoriu in all_countries:
-                                                      print(teritoriu)
+                                        description = item["http://purl.org/dc/elements/1.1/description"].split()
+                                        for word in description:
+                                            if word[0].isupper() and  word in all_nationalities:
+                                                
+                                                    print(word)  
+                                            elif "ontology/deathPlace_label" in item:
+                                                if type(item["ontology/deathPlace_label"]) is list:
+                                                    for tara in item["ontology/deathPlace_label"]:
+                                                        if tara in all_countries:
+                                                                print(tara)
+                                                
+                                            elif "ontology/birthPlace_label" in item:
+                                                if type(item["ontology/birthPlace_label"]) is list:
+                                                    for teritoriu in item["ontology/birthPlace_label"]:
+                                                        if teritoriu in all_countries:
+                                                            print(teritoriu)
 
 
                                     elif "ontology/deathPlace_label" in item:
