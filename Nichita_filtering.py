@@ -1,5 +1,5 @@
 import json
-countries_ages_dic = {}
+countries_number_activists = {}
 all_countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola",
     "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
@@ -92,11 +92,11 @@ for letter in all_letters:
         data = json.load(file)
     for item in data: 
         if "http://purl.org/dc/elements/1.1/description" in item:
-            if "activist " in item["http://purl.org/dc/elements/1.1/description"]:
+            if  "activist"  in item["http://purl.org/dc/elements/1.1/description"]:
                     if "ontology/birthYear" in item and "ontology/deathYear" in item: 
                             if type(item["ontology/deathYear"]) is str and type(item["ontology/birthYear"]) is str:
                         
-                                if int(item["ontology/birthYear"])> 1800:
+                                if int(item["ontology/birthYear"])> 1880:
                                     age = int(item["ontology/deathYear"]) - int(item["ontology/birthYear"])
                                     #print(age)
                                     #print(item["title"], item["http://purl.org/dc/elements/1.1/description"])
@@ -120,12 +120,12 @@ for letter in all_letters:
                                                 for pays2 in item["ontology/birthPlace_label"]:
                                                     if pays2 in all_countries:
                                                       country_origin = pays2
-                                    if country_origin not in countries_ages_dic:
-                                        countries_ages_dic[country_origin] = 0
-                                    countries_ages_dic[country_origin] += 1
+                                    if country_origin not in countries_number_activists:
+                                        countries_number_activists[country_origin] = 0
+                                    countries_number_activists[country_origin] += 1
 
         
-print(countries_ages_dic)
+print(countries_number_activists)
 
                        
 
