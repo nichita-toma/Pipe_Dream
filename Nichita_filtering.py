@@ -92,7 +92,7 @@ for letter in all_letters:
         data = json.load(file)
     for item in data: 
         if "http://purl.org/dc/elements/1.1/description" in item:
-            if  "activist"  in item["http://purl.org/dc/elements/1.1/description"]:
+            if   "journalist" in item["http://purl.org/dc/elements/1.1/description"]:
                     if "ontology/birthYear" in item and "ontology/deathYear" in item: 
                             if type(item["ontology/deathYear"]) is str and type(item["ontology/birthYear"]) is str:
                         
@@ -100,7 +100,7 @@ for letter in all_letters:
                                     age = int(item["ontology/deathYear"]) - int(item["ontology/birthYear"])
                                     #print(age)
                                     #print(item["title"], item["http://purl.org/dc/elements/1.1/description"])
-                                    nationality = 'blabla'
+                                    country_origin = 'Unknwon'
                                     if any(char.isupper()for char in item["http://purl.org/dc/elements/1.1/description"]):
                                         description = item["http://purl.org/dc/elements/1.1/description"].split()
                                         for word in description:
@@ -108,7 +108,7 @@ for letter in all_letters:
                                                 
                                                 number = all_nationalities.index(word)
                                                 country_origin = all_countries[number]
-                                    if word not in all_nationalities:
+                                    if country_origin not in all_nationalities:
                                          if "ontology/deathPlace_label" in item:
                                             if type(item["ontology/deathPlace_label"]) is list:
                                                 for pays in item["ontology/deathPlace_label"]:
@@ -120,6 +120,8 @@ for letter in all_letters:
                                                 for pays2 in item["ontology/birthPlace_label"]:
                                                     if pays2 in all_countries:
                                                       country_origin = pays2
+                                   
+                                    
                                     if country_origin not in countries_number_activists:
                                         countries_number_activists[country_origin] = 0
                                     countries_number_activists[country_origin] += 1
