@@ -90,9 +90,16 @@ all_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 for letter in all_letters:    
     with open(f"People/{letter}_people.json") as file:
         data = json.load(file)
-    for item in data: 
+    for item in data:
+        
         if "http://purl.org/dc/elements/1.1/description" in item:
-            if   "journalist" in item["http://purl.org/dc/elements/1.1/description"]:
+            if   "activist" in item["http://purl.org/dc/elements/1.1/description"]:
+                    if "ontology/deathCause_label" in item:
+                        death_cause  = item["ontology/deathCause_label"]
+                    elif "ontology/deathCause" in item:
+                        death_cause = item["ontology/deathCause"]
+                    else:
+                        death_cause = "Unknown"
                     if "ontology/birthYear" in item and "ontology/deathYear" in item: 
                             if type(item["ontology/deathYear"]) is str and type(item["ontology/birthYear"]) is str:
                         
@@ -122,12 +129,26 @@ for letter in all_letters:
                                                       country_origin = pays2
                                    
                                     
-                                    if country_origin not in countries_number_activists:
-                                        countries_number_activists[country_origin] = 0
-                                    countries_number_activists[country_origin] += 1
+                                    
+                                final_data = {
+                                    "Country": country_origin, 
+                                    "Name" : item["title"],
+                                    "Age": age,
+                                    "Death_year": item["ontology/deathYear"],
+                                    "Death_cause": death_cause
+                                        
+
+                                }
+                                with open("deathcause_activist_data.json", 'a', encoding = 'utf-8') as file:
+                                    json.dump(final_data, file, indent = 4)
+                                    
+
+                              
+
+                                   
 
         
-print(countries_number_activists)
+
 
                        
 
