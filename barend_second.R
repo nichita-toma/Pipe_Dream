@@ -33,7 +33,7 @@ category_counts <- activist_w_ratio |>
  
 
 #Make bar chart with ratio early death vs late death
-ggplot(category_counts) +
+barchart_percentage_of_life_expectancy <- ggplot(category_counts) +
   aes(x = lifespan_label, y = percentage) +
   geom_col(fill = "tomato") +
   labs(x = "Death Category",
@@ -57,26 +57,53 @@ democratic_index_data_long <- pivot_longer(democratic_index_data, c(`1789`:`2024
 
  # print(democratic_index_data_long)
 
-
-#Pivot life expectancy data
- activist_w_life_expect <- activists_df_rough |>
-   left_join(life_expectancy_data, by = c("Country" = "country_col", "Death_year_int" = "Year"))
- #print()
-
  activist_df_complete <- activist_w_life_expect |>
-   left_join(democratic_index_data_long, by = c("Country" = "country_name", "Death_year_int" = "Year_int"))
+   left_join(democratic_index_data_long, by = c("Country" = "country_name", "Death_year_int" = "Year_int")) |>
+   print()
 
 
-#OBTAIN DIFFERENCE VALUE FOR SCATTERPLOT
+#OBTAIN DIFFERENCE VALUE FOR MAIN SCATTERPLOT
 activist_w_diff <- activist_df_complete |>
    mutate(age_diff = abs(Age_int - life_expectancy)) |>
    group_by(Country) |>
    summarise(mean_difference = mean(age_diff),
    n_entries = n()) |>
-  filter(n_entries >= 5) |>
-  print()
-   
+  filter(n_entries >= 5) 
+ 
 
+#OBTAIN MEAN DEMOCRATIC INDEX PER COUNTRY
+country_di_summary <- democratic_index_data_long |>
+  group_by(country_name) |>
+  summarise(
+  mean_DI = mean(Index, na.rm = TRUE),
+  sd_DI = sd(Index, na.rm = TRUE)) |>
+  print()
+
+activist_df_meanDI <- activist_w_diff |>
+  left_join(
+    country_di_summary,
+    by = c("Country" = "country_name")
+  ) |>
+  drop_na() |>
+  print()
+
+#COMPUTE SCATTERPLOT
+scatterplot_relative_life_expectancy_vs_democracy <- ggplot(activist_df_meanDI) +
+  aes(x = mean_difference, y = mean_DI) +
+  labs(
+    x = "Mean relative life expectancy per country (years)",
+    y = "Mean democratic index (1950-2024)",
+    title = "Relative life expectancy of activists vs mean country democracy level",
+    caption = "Note: Relative life expectancy = |Actual age - National life expectancy at time of death|"
+) +
+  geom_point(size = 2, color = "red") +
+  geom_text(aes(label = Country), 
+            size = 3, 
+            vjust = -1,  # Adjust vertical position
+            hjust = 0.1) +
+  theme_minimal()
+
+print(scatterplot_main)
 
 #CALCULATE REGIONAL DATA
 #Sorting into regions:
@@ -135,5 +162,14 @@ country_counts <- activist_w_region |>
     mutate(
     percentage = n_country/sum(n_country) * 100
   ) |>
-  filter(percentage > 20) 
+  arrange(desc(percentage)) |>
+  print()
 
+ggsave("barchart_percentage.png", 
+       plot = barchart_percentage_of_life_expectancy,
+       width = 8, height = 6, dpi = 300)
+
+# Save the scatterplot
+ggsave("scatterplot_relative_life_expectancy.png", 
+       plot = scatterplot_relative_life_expectancy_vs_democracy,
+       width = 10, height = 6, dpi = 300)
