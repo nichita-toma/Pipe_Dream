@@ -3,12 +3,19 @@ library(tidyverse)
 
 activists_df_rough <-  read_csv("output.csv")
 
-life_expectancy_data <- read_csv("life_expectancy.csv")
+life_expectancy_data_long <- read_csv("life-expectancy.csv")
 
 democratic_index_data <- read_csv("Human-Progress-Liberal-Democracy-Index.csv")
 
-head(life_expectancy_data)
-names(life_expectancy_data)
+#Pivot life expectancy data
+
+
+life_expectancy_data <- life_expectancy_data_long |>
+  rename('life_expectancy' = Life Expectancy (years))
+  pivot_wider(cols('Entity', 'Years' , 'Life Expectancy (years)'),
+  names_to = 'Year', values_to = 'Life expectancy (years)')
+
+
 #Calculate the mean value of the lifespan
 life_expectancy_df_mean <-  life_expectancy_data |>
   mutate(
